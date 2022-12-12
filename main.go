@@ -11,6 +11,19 @@ import (
 	"text/tabwriter"
 )
 
+// array of month abbreviations
+var months = [...]string{"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"}
+
+// convert month abbreviation to integer
+func monthToInt(month string) int {
+	for i, m := range months {
+		if m == month {
+			return i
+		}
+	}
+	return 0
+}
+
 type Items []string
 
 func (u Items) Len() int {
@@ -30,7 +43,6 @@ func (u Items) Less(i, j int) bool {
 	date, err := strconv.Atoi(strings.Replace(u[i][0:5], "/", "", 1))
 	date2, err2 := strconv.Atoi(strings.Replace(u[j][0:5], "/", "", 1))
 	if err != nil || err2 != nil {
-		// fmt.Println("Error in item sort\nItem 1: " + u[i] + "\nItem 2: " + u[j])
 		return false
 	}
 
@@ -47,7 +59,7 @@ func main() {
 		"t4r.org free",
 		"4runners.com"}
 
-	terms := []string{"oem", "rock rails", "oem sliders", "skid plate", "skidplate", "tire hitch", "tire mount", "front valence", "bumper valence", "orp valence", "road valence"}
+	terms := []string{"rock rails", "oem sliders", "skid plate", "skidplate", "tire hitch", "tire mount", "front valence", "bumper valence", "orp valence", "road valence", "valence"}
 
 	var items []string
 	for i := 0; i < len(urls); i++ {
@@ -84,27 +96,58 @@ func main() {
 
 				// get second index of <
 				secondIndex = strings.Index(line, "</a>")
+				nextLine := ""
+				if secondIndex == -1 {
+					nextLine = strings.TrimSpace(responseLines[j+1])
+					secondIndex = strings.Index(nextLine, "<")
+					line = line[firstIndex+1:] + " " + nextLine[0:secondIndex]
+				} else {
+					line = line[firstIndex+1 : secondIndex]
+				}
 
 				// get date
 				date = responseLines[j+21]
 				date = strings.TrimSpace(date)
 				date = strings.Replace(date[0:5], "-", "/", 1)
-				fmt.Println(date)
 			} else if strings.Contains(line, "/preview") {
 				// get first index of >
 				firstIndex = strings.Index(line, ">")
 
 				// get second index of <
 				secondIndex = strings.Index(line, "<")
+				nextLine := ""
+				if secondIndex == -1 {
+					nextLine = strings.TrimSpace(responseLines[j+1])
+					secondIndex = strings.Index(nextLine, "<")
+					line = line[firstIndex+1:] + " " + nextLine[0:secondIndex]
+				} else {
+					line = line[firstIndex+1 : secondIndex]
+				}
+
+				// get date
+				date = responseLines[j+7]
+
+				dateFirstIndex := strings.Index(date, "title") + 9
+				month := monthToInt(date[dateFirstIndex : dateFirstIndex+3])
+				day := strings.Replace(date[dateFirstIndex+4:dateFirstIndex+6], ",", "", 1)
+				dayInt, err := strconv.Atoi(day)
+				if dayInt < 10 && err == nil {
+					day = "0" + day
+				}
+
+				if month < 10 {
+					date = "0" + strconv.Itoa(month) + "/" + day
+				} else {
+					date = strconv.Itoa(month+1) + "/" + day
+				}
 			}
 
 			if firstIndex != 0 && secondIndex != 0 {
-				line = line[firstIndex+1 : secondIndex]
 				line = strings.Replace(line, "&quot;", "\"", 1)
 
-				cost := "For sale:"
+				cost := "For sale"
 				if strings.Contains(names[i], "free") {
-					cost = "Free:\t"
+					cost = "Free\t"
 				} else if strings.Contains(line, "$") {
 					index := strings.Index(line, "$")
 					afterString := line[index:]
