@@ -59,7 +59,7 @@ func main() {
 		"t4r.org free",
 		"4runners.com"}
 
-	terms := []string{"rock rails", "oem sliders", "skid plate", "skidplate", "tire hitch", "tire mount", "front valence", "bumper valence", "orp valence", "road valence", "valence"}
+	terms := []string{"rock", "rails", "sliders", "skid", "skidplate", "tire hitch", "tire mount", "valence"}
 
 	var items []string
 	for i := 0; i < len(urls); i++ {
@@ -89,8 +89,10 @@ func main() {
 			firstIndex := 0
 			secondIndex := 0
 			date := "     "
+			site := ""
 			// if line includes substring
 			if strings.Contains(line, "thread_title") {
+				site = "4rs"
 				// get first index of >
 				firstIndex = strings.Index(line, ">")
 
@@ -110,6 +112,7 @@ func main() {
 				date = strings.TrimSpace(date)
 				date = strings.Replace(date[0:5], "-", "/", 1)
 			} else if strings.Contains(line, "/preview") {
+				site = "t4r"
 				// get first index of >
 				firstIndex = strings.Index(line, ">")
 
@@ -157,18 +160,19 @@ func main() {
 					cost = afterString + "\t"
 				}
 
-				if strings.Contains(date, "Yeste") {
-					date = "Yday"
-				}
-				if strings.Contains(date, "Today") {
-					date = "Today"
-				}
-
-				line = date + "\t" + cost + "\t" + line
-
+				keepLooking := true
 				for k := 0; k < len(terms); k++ {
-					if strings.Contains(line, terms[k]) {
+					if keepLooking && strings.Contains(line, terms[k]) {
+						if strings.Contains(date, "Yeste") {
+							date = "Yday"
+						}
+						if strings.Contains(date, "Today") {
+							date = "Today"
+						}
+
+						line = date + "\t" + site + "\t" + cost + "\t" + line
 						items = append(items, line)
+						keepLooking = false
 					}
 				}
 			}
