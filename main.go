@@ -92,7 +92,7 @@ func main() {
 			site := ""
 			// if line includes substring
 			if strings.Contains(line, "thread_title") {
-				site = "4rs"
+				site = "t4r"
 				// get first index of >
 				firstIndex = strings.Index(line, ">")
 
@@ -112,7 +112,7 @@ func main() {
 				date = strings.TrimSpace(date)
 				date = strings.Replace(date[0:5], "-", "/", 1)
 			} else if strings.Contains(line, "/preview") {
-				site = "t4r"
+				site = "4rs"
 				// get first index of >
 				firstIndex = strings.Index(line, ">")
 
