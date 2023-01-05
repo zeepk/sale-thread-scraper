@@ -33,6 +33,18 @@ func (u Items) Swap(i, j int) {
 	u[i], u[j] = u[j], u[i]
 }
 func (u Items) Less(i, j int) bool {
+	if u[i][0:3] == "UNK" {
+		return true
+	}
+	if u[j][0:3] == "UNK" {
+		return false
+	}
+	if u[i][0:5] == "Today" {
+		return true
+	}
+	if u[j][0:5] == "Today" {
+		return false
+	}
 	if u[i][0:5] == "Yeste" {
 		return true
 	}
@@ -59,7 +71,8 @@ func main() {
 		"t4r.org free",
 		"4runners.com"}
 
-	terms := []string{"rock", "rails", "sliders", "skid", "skidplate", "tire hitch", "tire mount", "valence"}
+	terms := []string{"rock", "rail", "slider", "skid", "skidplate", "valence", "parts", "takeoff", "take off"}
+	ignore := []string{"3rd", "4th"}
 
 	var items []string
 	for i := 0; i < len(urls); i++ {
@@ -88,8 +101,8 @@ func main() {
 			line := strings.ToLower(responseLines[j])
 			firstIndex := 0
 			secondIndex := 0
-			date := "     "
-			site := ""
+			date := "UNK"
+			site := "UNK"
 			// if line includes substring
 			if strings.Contains(line, "thread_title") {
 				site = "t4r"
@@ -110,7 +123,16 @@ func main() {
 				// get date
 				date = responseLines[j+21]
 				date = strings.TrimSpace(date)
-				date = strings.Replace(date[0:5], "-", "/", 1)
+				// if date is less than 10 characters
+				if len(date) >= 5 {
+					date = strings.Replace(date[0:5], "-", "/", 1)
+				} else {
+					date = "UNK"
+				}
+
+				if strings.Contains(date, "div") {
+					date = "UNK"
+				}
 			} else if strings.Contains(line, "/preview") {
 				site = "4rs"
 				// get first index of >
@@ -163,16 +185,25 @@ func main() {
 				keepLooking := true
 				for k := 0; k < len(terms); k++ {
 					if keepLooking && strings.Contains(line, terms[k]) {
-						if strings.Contains(date, "Yeste") {
-							date = "Yday"
+						ignoreItem := false
+						for l := 0; l < len(ignore); l++ {
+							if !ignoreItem && strings.Contains(line, ignore[l]) {
+								ignoreItem = true
+							}
 						}
-						if strings.Contains(date, "Today") {
-							date = "Today"
-						}
+						if !ignoreItem {
+							if strings.Contains(date, "00") {
+								date = "UNK"
+							}
 
-						line = date + "\t" + site + "\t" + cost + "\t" + line
-						items = append(items, line)
-						keepLooking = false
+							if len(date) <= 5 {
+								date = date + "\t"
+							}
+
+							line = date + "\t" + site + "\t" + cost + "\t" + line
+							items = append(items, line)
+							keepLooking = false
+						}
 					}
 				}
 			}
