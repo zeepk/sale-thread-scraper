@@ -71,7 +71,7 @@ func main() {
 		"t4r.org free",
 		"4runners.com"}
 
-	terms := []string{"rock", "rail", "slider", "skid", "skidplate", "valence", "parts", "takeoff", "take off"}
+	terms := []string{"rock", "rail", "slider", "skid", "skidplate", "valence", "valance", "parts", "takeoff", "take off"}
 	ignore := []string{"3rd", "4th"}
 
 	var items []string
