@@ -9,6 +9,7 @@ import (
 	"strconv"
 	"strings"
 	"text/tabwriter"
+	"time"
 )
 
 // array of month abbreviations
@@ -40,16 +41,16 @@ func (u Items) Less(i, j int) bool {
 		return false
 	}
 	if u[i][0:5] == "Today" {
-		return true
+		return false
 	}
 	if u[j][0:5] == "Today" {
-		return false
-	}
-	if u[i][0:5] == "Yeste" {
 		return true
 	}
-	if u[j][0:5] == "Yeste" {
+	if u[i][0:5] == "Yeste" {
 		return false
+	}
+	if u[j][0:5] == "Yeste" {
+		return true
 	}
 	// first 5 characters are date
 	date, err := strconv.Atoi(strings.Replace(u[i][0:5], "/", "", 1))
@@ -59,10 +60,11 @@ func (u Items) Less(i, j int) bool {
 	}
 
 	// convert date and date2 to integers
-	return date > date2
+	return date < date2
 }
 
 func main() {
+	currentMonth := int(time.Now().Month())
 	urls := [3]string{"https://www.toyota-4runner.org/for-sale-t4r-items/",
 		"https://www.toyota-4runner.org/free/",
 		"https://www.4runners.com/forums/5th-gen-4runner-parts-marketplace-2010-2024.8/"}
@@ -192,6 +194,11 @@ func main() {
 							}
 						}
 						if !ignoreItem {
+							month, err := strconv.Atoi(date[0:2])
+							if err == nil && month > currentMonth {
+								continue
+							}
+
 							if strings.Contains(date, "00") {
 								date = "UNK"
 							}
