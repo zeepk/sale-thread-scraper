@@ -9,7 +9,6 @@ import (
 	"strconv"
 	"strings"
 	"text/tabwriter"
-	"time"
 )
 
 // array of month abbreviations
@@ -64,7 +63,8 @@ func (u Items) Less(i, j int) bool {
 }
 
 func main() {
-	currentMonth := int(time.Now().Month())
+	// currentMonth := int(time.Now().Month())
+	currentMonth := 2
 	urls := [3]string{"https://www.toyota-4runner.org/for-sale-t4r-items/",
 		"https://www.toyota-4runner.org/free/",
 		"https://www.4runners.com/forums/5th-gen-4runner-parts-marketplace-2010-2024.8/"}
@@ -73,7 +73,7 @@ func main() {
 		"t4r.org free",
 		"4runners.com"}
 
-	terms := []string{"rock", "rail", "slider", "skid", "skidplate", "valence", "valance", "parts", "takeoff", "take off"}
+	terms := []string{"rock", "rail", "slider", "skid", "skidplate", "parts", "takeoff", "take off"}
 	ignore := []string{"3rd", "4th"}
 
 	var items []string
