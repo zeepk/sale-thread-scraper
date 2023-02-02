@@ -65,16 +65,22 @@ func (u Items) Less(i, j int) bool {
 func main() {
 	// currentMonth := int(time.Now().Month())
 	currentMonth := 2
-	urls := [3]string{"https://www.toyota-4runner.org/for-sale-t4r-items/",
+	urls := [5]string{
+		"https://www.toyota-4runner.org/for-sale-t4r-items/",
+		"https://www.toyota-4runner.org/for-sale-suspension-wheels-tires/",
 		"https://www.toyota-4runner.org/free/",
-		"https://www.4runners.com/forums/5th-gen-4runner-parts-marketplace-2010-2024.8/"}
+		"https://www.4runners.com/forums/5th-gen-4runner-parts-marketplace-2010-2024.8/",
+		"https://www.4runners.com/forums/marketplace-wheels-tires.10/"}
 
-	names := [3]string{"t4r.org for sale",
-		"t4r.org free",
-		"4runners.com"}
+	names := [5]string{
+		"t4r items",
+		"t4r tires",
+		"t4r free",
+		"4rs items",
+		"4rs tires"}
 
-	terms := []string{"rock", "rail", "slider", "skid", "skidplate", "parts", "takeoff", "take off"}
-	ignore := []string{"3rd", "4th"}
+	terms := []string{"rock", " rail", "slider", "nfab", "n-fab", "n fab", "step system", "falken", "wildpeak"}
+	ignore := []string{"3rd", "4th", "285", "265"}
 
 	var items []string
 	for i := 0; i < len(urls); i++ {
@@ -104,10 +110,8 @@ func main() {
 			firstIndex := 0
 			secondIndex := 0
 			date := "UNK"
-			site := "UNK"
 			// if line includes substring
 			if strings.Contains(line, "thread_title") {
-				site = "t4r"
 				// get first index of >
 				firstIndex = strings.Index(line, ">")
 
@@ -136,7 +140,6 @@ func main() {
 					date = "UNK"
 				}
 			} else if strings.Contains(line, "/preview") {
-				site = "4rs"
 				// get first index of >
 				firstIndex = strings.Index(line, ">")
 
@@ -207,7 +210,7 @@ func main() {
 								date = date + "\t"
 							}
 
-							line = date + "\t" + site + "\t" + cost + "\t" + line
+							line = date + "\t" + names[i] + "\t" + cost + "\t" + line
 							items = append(items, line)
 							keepLooking = false
 						}
