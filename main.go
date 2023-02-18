@@ -79,7 +79,7 @@ func main() {
 		"4rs items",
 		"4rs tires"}
 
-	terms := []string{"rock", " rail", "slider", "nfab", "n-fab", "n fab", "step system", "falken", "wildpeak"}
+	terms := []string{"skid", "plate", "skidplate", "rock", " rail", "slider", "nfab", "n-fab", "n fab", "step system", "falken", "wildpeak"}
 	ignore := []string{"3rd", "4th", "285", "265"}
 
 	var items []string
