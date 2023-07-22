@@ -80,7 +80,7 @@ func main() {
 		"4rs tires"}
 
 	terms := []string{"skid", "plate", "skidplate", "rock", " rail", "slider", "nfab", "n-fab", "n fab", "step system", "falken", "wildpeak"}
-	ignore := []string{"3rd", "4th", "285", "265"}
+	ignore := []string{"3rd", "4th", "265"}
 
 	var items []string
 	for i := 0; i < len(urls); i++ {
